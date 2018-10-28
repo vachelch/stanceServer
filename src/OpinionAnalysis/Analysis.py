@@ -10,16 +10,16 @@ import pandas as pd
 import json
 
 try:
-	from .GetOpinion import CopeOpiAnalyzer
-	from .ckipsvr import CKIPsegmenter
+	from OpinionAnalysis.GetOpinion import CopeOpiAnalyzer
+	from OpinionAnalysis.ckipsvr import CKIPsegmenter
 	# from .oneClickStanceClassification import stanceAnalyzer
-	from .oneClickStanceClassification import stanceAnalyzerCos
+	from OpinionAnalysis.oneClickStanceClassification import stanceAnalyzerCos
 	# from .oneClickStanceClassificationWithNeg import stanceAnalyzerCos
 except:
-	from GetOpinion import CopeOpiAnalyzer
-	from ckipsvr import CKIPsegmenter
+	from OpinionAnalysis.GetOpinion import CopeOpiAnalyzer
+	from OpinionAnalysis.ckipsvr import CKIPsegmenter
 	# from oneClickStanceClassification import stanceAnalyzer
-	from oneClickStanceClassification import stanceAnalyzerCos
+	from OpinionAnalysis.oneClickStanceClassification import stanceAnalyzerCos
 	# from oneClickStanceClassificationWithNeg import stanceAnalyzerCos
 
 def get_news_opinion(json_data, num_cores, text, w2v):
@@ -186,3 +186,4 @@ def Stanford2CKIP(x):
 	except KeyError: # if x does not exist in this mapping, return x
 		logging.info('key "{}" does not exist in Stanford2CKIP mapping.'.format(x))
 		return(x)
+

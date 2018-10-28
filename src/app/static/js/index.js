@@ -21,10 +21,12 @@ var handleFeedback = function(){
         'label': label
     }
 
+    var feedback_url = base_url + "/feedback";
+    
     if (this_node.attr('class').includes('activate')){
         data_json['operation'] = 'delete';
 
-        $.post("http://140.112.31.187:6655/feedback", data_json, function(){
+        $.post(feedback_url, data_json, function(){
             this_node.removeClass('activate');
             this_node.siblings().removeClass('disactivate');
         });
@@ -32,7 +34,7 @@ var handleFeedback = function(){
     else{
         data_json['operation'] = 'insert';
 
-        $.post("http://140.112.31.187:6655/feedback", data_json, function(){
+        $.post(feedback_url, data_json, function(){
             this_node.addClass('activate');
             this_node.siblings().addClass('disactivate');
         });

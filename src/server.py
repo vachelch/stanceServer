@@ -107,7 +107,7 @@ def feedback():
 
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
-	app.run(host='0.0.0.0', port=6655, debug=True, processes = 20, extra_files=['./app/static/js/index.js'])
+	app.run(host='0.0.0.0', port=6656, debug=True, processes = 20, extra_files=['./app/static/js/index.js'])
 
 
 

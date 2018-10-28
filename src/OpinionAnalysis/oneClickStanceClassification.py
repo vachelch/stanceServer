@@ -8,7 +8,7 @@ import xgboost as xgb
 import pickle
 # from gensim.models import word2vec
 # def LoadModel(modelFilename, binOrNot=False):
-# 	model = word2vec.KeyedVectors.load_word2vec_format(modelFilename, binary=binOrNot)
+# 	model = word2vec.KeyedVectors.load_word2vec_format(modelFilenamPe, binary=binOrNot)
 # 	return model
 
 def removePunctuation(_str):
@@ -149,11 +149,7 @@ def stanceAnalyzerCos(queryText, bodyText, w2v):
 
 	foldValid = True
 	Label = 3
-	# modelFilename = "./OpinionAnalysis/XGBoost3_F0_Att2trainChineseW2V_D300W5MC2_v2BiWay.pickle"
-	# modelFilename = "/dhome/b01901130/stanceEmbedding/Chinese-Discovery-News-master/src/OpinionAnalysis/XGBoost3_F0_Att2ChinesenoWeight5Fold_v4.pickle"
-	# modelFilename = "/dhome/b01901130/stanceEmbedding/Chinese-Discovery-News-master/src/OpinionAnalysis/XGBoost3_F0_Att2ChineseWeighted1_v5.pickle"
-	# modelFilename = "/dhome/b01901130/stanceEmbedding/Chinese-Discovery-News-master/src/OpinionAnalysis/XGBoost3_F0_Att2ChineseWeighted15Fold_v5.pickle"
-	modelFilename = "/dhome/b01901130/stanceEmbedding/Chinese-Discovery-News-master/src/OpinionAnalysis/XGBoost3_F0_Att2ChineseWeighted15Fold_v8NEGEP2000_v2.pickle"
+	modelFilename = "./OpinionAnalysis/XGBoost3_F0_Att2ChineseWeighted15Fold_v8NEGEP2000_v2.pickle"
 	with open(modelFilename, "rb") as f:
 		pickleLoad = pickle.load(f)
 	bst = pickleLoad[0]
@@ -202,10 +198,8 @@ def stanceAnalyzer(queryText, bodyText, w2v):
 	#cos sim attention model
 	foldValid = True
 	Label = 3
-	# modelCosFilename = "./OpinionAnalysis/XGBoost3_F0_Att2trainChineseW2V_D300W5MC2_v2BiWay.pickle"
-	# modelCosFilename = "./OpinionAnalysis/XGBoost3_F0_Att2ChineseBiWayWeighted15Fold.pickle"
-	# modelCosFilename = "XGBoost3_F0_Att2ChineseBiWayWeighted15Fold.pickle"
-	modelCosFilename = "/dhome/b01901130/stanceEmbedding/Chinese-Discovery-News-master/src/OpinionAnalysis/XGBoost3_F0_Att2ChinesenoWeight5Fold_v4.pickle"
+
+	modelCosFilename = "./OpinionAnalysis/XGBoost3_F0_Att2ChinesenoWeight5Fold_v4.pickle"
 	with open(modelCosFilename, "rb") as f:
 		pickleLoad = pickle.load(f)
 	bstCos = pickleLoad[0]
@@ -222,10 +216,7 @@ def stanceAnalyzer(queryText, bodyText, w2v):
 	_stanceCos = labelList[int(pred_y[0])]
 	
 	# TSPW model
-	# modelTSPWFilename = "./OpinionAnalysis/XGBoostSemiRetrain3_F0_Att2trainChineseW2V_D300W5MC2_v2BiWay.pickle"
-	# modelTSPWFilename = "./OpinionAnalysis/XGBoostSemiRetrain3_F0_Att2ChineseBiWaynoWeight5Fold.pickle"
-	# modelTSPWFilename = "XGBoostSemiRetrain3_F0_Att2ChineseBiWaynoWeight5Fold.pickle"
-	modelTSPWFilename = "/dhome/b01901130/stanceEmbedding/Chinese-Discovery-News-master/src/OpinionAnalysis/XGBoostRetrain3_F0_Att2ChinesenoWeight5Fold_v4.pickle"
+	modelTSPWFilename = "./OpinionAnalysis/XGBoostRetrain3_F0_Att2ChinesenoWeight5Fold_v4.pickle"
 	with open(modelTSPWFilename, "rb") as f:
 		pickleLoad = pickle.load(f)
 	bstTSPW = pickleLoad[0]
@@ -260,3 +251,4 @@ def stanceAnalyzer(queryText, bodyText, w2v):
 # bodyTextT = "婚姻平權 賴清德：不放棄在今年提方案 （中央社記者王承中台北6日電）行政院長賴清德今天針對婚姻平權表示，行政院目前正積極推動，沒有放棄在今年年底前能提出方案，他擔任行政院長面對這個重大政策，不會拖延，會盡力推動。"
 # print(stanceAnalyzer(queryTextT, bodyTextT, W2V))
 # print(stanceAnalyzerCos(queryTextT, bodyTextT, W2V))
+
