@@ -6,6 +6,7 @@ var handleFeedback = function(){
     var this_node = $(this);
     var parent_tr = $(this).parent().parent()
 
+    var query = parent_tr.find('._query-input').text()
     var url = parent_tr.find('._title a').attr('href')
     var title = parent_tr.find('._title').text()
     var website = parent_tr.find('._website').text()
@@ -13,6 +14,7 @@ var handleFeedback = function(){
     var stance = parent_tr.find('._stance').text()
 
     var data_json ={
+        'query': query,
         'url': url,
         'title': title,
         'website': website,
@@ -54,7 +56,8 @@ var dataset_to_table_display = function() {
   $.get(list_url, function(data) {
     data = JSON.parse(data)
     // to see what the data look like
-    // console.log(JSON.stringify(data,null,'\t'))
+    // alert(JSON.stringify(data,null,'\t'))
+    // alert(JSON.stringify(data[94],null,'\t'))
 
     // Fill New Table Section
     var table_body = $('#news-table').find('tbody');
@@ -74,6 +77,7 @@ var dataset_to_table_display = function() {
       // var score = article['score'];
       // var font_color = article['opi'] == 'Positive' ? '#26af28': (article['opi'] == 'Negative' ? "#db2113" : "#3e6cd8");
 
+      var query = article['query'];
       var title = article['title'];
       var url = article['url'];
       var website = article['website'];
@@ -98,6 +102,7 @@ var dataset_to_table_display = function() {
       table_body.append(
           $('<tr>')
           .append( $('<td>').append(id) )
+          .append( $('<td>').addClass('_query-input').append(query) )
           .append( $('<td>').addClass('_title').append( $('<a>').attr('href',url).attr('target','_blank').append(title)) )
           // .append( $('<td>').append( $('<font>').attr('color', t_font_color).append(t_opi)) )
           // .append( $('<td>').append( $('<font>').attr('color', t_font_color).append(t_score)) )

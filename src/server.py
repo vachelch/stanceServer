@@ -72,6 +72,7 @@ def feedback():
 		# dataDict = json.loads(request.data.decode('utf8'))
 
 		operation = dataDict.get('operation')
+		query = dataDict.get('query')
 		url = dataDict.get('url')
 		title = dataDict.get('title')
 		website = dataDict.get('website')
@@ -85,7 +86,7 @@ def feedback():
 			in_db_urls, urls = manager.db.filter([url])
 			if len(urls) > 0:
 				content = GetUrlContent(url)
-				manager.db.insert([[url, title, website, date, stance, label, content]])
+				manager.db.insert([[query, url, title, website, date, stance, label, content]])
 				return 'inserted'
 			else:
 				return 'already in database'
@@ -107,7 +108,7 @@ def feedback():
 
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
-	app.run(host='0.0.0.0', port=6656, debug=True, processes = 20, extra_files=['./app/static/js/index.js'])
+	app.run(host='0.0.0.0', port=6655, debug=True, processes = 25, extra_files=['./app/static/js/index.js'])
 
 
 

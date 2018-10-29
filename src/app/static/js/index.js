@@ -6,6 +6,7 @@ var handleFeedback = function(){
     var this_node = $(this);
     var parent_tr = $(this).parent().parent()
 
+    var query = $('#query-input').val();
     var url = parent_tr.find('._title a').attr('href')
     var title = parent_tr.find('._title').text()
     var website = parent_tr.find('._website').text()
@@ -13,6 +14,7 @@ var handleFeedback = function(){
     var stance = parent_tr.find('._stance').text()
 
     var data_json ={
+        'query': query,
         'url': url,
         'title': title,
         'website': website,

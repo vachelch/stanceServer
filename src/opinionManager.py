@@ -9,6 +9,8 @@ from NewsCrawler import get_Google_news, get_full_content
 from OpinionAnalysis import get_news_opinion
 from OpinionDB import OpinionDB
 
+import numpy as np
+
 # from gensim.models import word2vec
 from gensim.models import KeyedVectors
 def LoadModel(modelFilename, binOrNot=False):
@@ -100,7 +102,8 @@ class OpinionManager(object):
 				# 		row_dict['website'],
 				# 		row_dict['date'],
 				# 		row_dict['stance'])
-				row = [ row_dict['url'],
+				row = [ "", # query
+						row_dict['url'],
 						row_dict['title'],
 						row_dict['website'],
 						row_dict['date'],
@@ -138,19 +141,22 @@ class OpinionManager(object):
 		return json_data
 
 	def retrieve_from_local(self):
-		data = self.db.show_all()
+		data = np.array(self.db.show_all())
+		
 		return self.vec_to_json(data)
 
 	def vec_to_json(self, data):
 		json_data = {}
+
 		for url_idx, row in enumerate(data):
 			row_obj = { 'id': url_idx,
-						'url': unquote(row[0]),
-						'title': row[1],
-						'website': row[2],
-						'date': row[3],
-						'stance': row[4],
-						'label': row[5],}
+						'query': row[0],
+						'url': unquote(row[1]),
+						'title': row[2],
+						'website': row[3],
+						'date': row[4],
+						'stance': row[5],
+						'label': row[6]}
 
 			json_data[ url_idx ] = row_obj
 

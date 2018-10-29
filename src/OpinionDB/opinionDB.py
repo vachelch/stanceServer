@@ -6,6 +6,7 @@ import logging
 create_table_stmt ="""
 CREATE TABLE IF NOT EXISTS opinion
 (
+query VARCHAR(255),
 url VARCHAR(255) NOT NULL,
 title VARCHAR(255),
 website VARCHAR(255),
@@ -18,7 +19,7 @@ content VARCHAR(4096)
 
 drop_table_stmt = """DROP TABLE IF EXISTS opinion;"""
 describe_table_stmt = """PRAGMA table_info(opinion);"""
-insert_stmt = "INSERT INTO opinion (url, title, website, date, stance, label, content) VALUES (\"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\" ,\"{}\");"
+insert_stmt = "INSERT INTO opinion (query, url, title, website, date, stance, label, content) VALUES (\"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\" ,\"{}\");"
 delete_stmt = "DELETE FROM opinion WHERE url=\"{}\""
 update_stmt = "UPDATE opinion SET stance=\"{}\",label=\"{}\" where url=\"{}\""
 check_stmt = "SELECT EXISTS(SELECT 1 FROM opinion WHERE url=\"{}\" LIMIT 1);"
