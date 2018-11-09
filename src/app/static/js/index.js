@@ -209,6 +209,14 @@ var page_data_to_table_display = function(text, count) {
 
     // Fill New Table Section
     var data = obj['json_data'];
+    doc_number = Object.keys(data).length
+
+    p_reminder = $("#reminder")
+    p_reminder.empty()
+    // if news in google news less than count
+    if (doc_number != count)
+      p_reminder.text('At most ' + doc_number + ' Taiwanese news about: 「' + text + '」 in google news')
+
     var table_body = $('#news-table').find('tbody');
     table_body.empty();
 

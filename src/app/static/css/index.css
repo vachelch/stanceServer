@@ -138,3 +138,8 @@ td {
   text-align: center;
 }
 
+#reminder{
+    font-size: 14px;
+    color: red;
+}
+

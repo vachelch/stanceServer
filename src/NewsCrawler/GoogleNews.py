@@ -15,7 +15,7 @@ def get_Google_news(keyword, num_news, tbs=0):
 	num = min(100, num_news) # max number of news for one query
 	count = 0
 	json_data = []
-	queryQuotation = True
+	queryQuotation = False 
 	for start in range(0, num_news, num):
 		# https://www.google.com.tw/search?q="美牛輸入台灣"&hl=zh-TW&gl=tw&authuser=0&tbm=nws&start=0&num=1&tbs=sbd:0
 		if not queryQuotation:
