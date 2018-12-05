@@ -33,7 +33,7 @@ import numpy as np
 
 BERT_BASE_DIR="/tmp/mrpc_output/chinese_L-12_H-768_A-12/"
 GLUE_DIR="fnc_data"
-TRAINED_CLASSIFIER="/tmp/mrpc_output/model.ckpt-9993"
+TRAINED_CLASSIFIER="/tmp/mrpc_output/model.ckpt-10131"
 
 class flags(object):
   def __init__(self):
