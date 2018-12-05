@@ -8,3 +8,8 @@ numpy==1.12.1
 pandas==0.20.1
 pathos==0.2.0
 requests==2.17.3
+xgboost-0.81
+pyemd-0.5.1
+hanziconv
+scipy
+gensim

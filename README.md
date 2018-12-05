@@ -26,7 +26,8 @@ $python3 src/server.py
 
 # To-do List
 * OpinionAnalysis
-  - Stance Classfication
+  - Correctable Learning Algorithm
+  - Better Stance Classfication
 * User Interface
   - Loading Bar
   - Date range
