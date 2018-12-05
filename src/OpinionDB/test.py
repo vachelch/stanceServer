@@ -1,5 +1,7 @@
 import sqlite3
 from urllib.parse import unquote
+import numpy as np
+import csv
 
 db_path = 'opinion.db'
 db_path2 = 'opinion2.db'
@@ -37,20 +39,30 @@ raw_data = cursor.fetchall()
 conn2 = sqlite3.connect(db_path2, check_same_thread=False)
 cursor2 = conn2.cursor()
 
-cursor2.execute(create_table_stmt)
-conn2.commit()
+raw_data = [row for row in raw_data if row[0] != '']
 
-for row in raw_data:
-	row = list(row)
-	# row[1] = unquote(row[1])
-	row.insert(0, "")
-	print(row[:-1])
-	cursor2.execute(insert_stmt.format(*row))
-	conn2.commit()
+feedback = []
+stances = set(['贊成', '支持', '反對'])
+
+for i, row in enumerate(raw_data):
+	label = row[6]
+	query = row[0]
+	content = " ".join([row[2].strip(), row[7].strip()])
+
+	if query[:2] not in stances:
+		query = '贊成' + query
+
+	if label == 'neutral':
+		label = 'discuss'
+	
+	feedback.append([label, query, content])
 
 
-
-
+with open('train_feedback.csv', 'w') as csvfile:
+    spamwriter = csv.writer(csvfile, delimiter=',')
+    for row in feedback:
+    	spamwriter.writerow(row)
+    
 
 
 

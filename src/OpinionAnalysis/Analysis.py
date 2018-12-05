@@ -2,45 +2,22 @@
 import os
 import logging
 import jieba
-# from nltk.tag import StanfordPOSTagger
 import time
+import json
 
 from pathos.pools import ProcessPool
 import pandas as pd
-import json
+import numpy as np
 
-try:
-	from OpinionAnalysis.GetOpinion import CopeOpiAnalyzer
-	from OpinionAnalysis.ckipsvr import CKIPsegmenter
-	# from .oneClickStanceClassification import stanceAnalyzer
-	from OpinionAnalysis.oneClickStanceClassification import stanceAnalyzerCos
-	# from .oneClickStanceClassificationWithNeg import stanceAnalyzerCos
-except:
-	from OpinionAnalysis.GetOpinion import CopeOpiAnalyzer
-	from OpinionAnalysis.ckipsvr import CKIPsegmenter
-	# from oneClickStanceClassification import stanceAnalyzer
-	from OpinionAnalysis.oneClickStanceClassification import stanceAnalyzerCos
-	# from oneClickStanceClassificationWithNeg import stanceAnalyzerCos
+
+
+import OpinionAnalysis.bert.run_classifier as bert
 
 def get_news_opinion(json_data, num_cores, text, w2v):
 	df_data = tag_and_write_for_CopeOpi(json_data, num_cores, text, w2v)
 	return df_data
 
 def tag_and_write_for_CopeOpi(json_data, num_cores, text, w2v, method='CKIP'):
-	## JIEBA + Stanford ##
-	# print("Init JIEBA")
-	# if method == 'JIEBA':
-	# 	JIEBAInit('OpinionAnalysis/dict/')
-		# SFtagger = StanfordPOSTagger(
-		# 'OpinionAnalysis/StanfordPosTagger/models/chinese-distsim.tagger',
-		# 'OpinionAnalysis/StanfordPosTagger/stanford-postagger-3.7.0.jar')
-	
-	# COanalyzer = CopeOpiAnalyzer('OpinionAnalysis/dict/')
-	# if not os.path.exists('./OpinionAnalysis/data'):
-	# 	os.makedirs('./OpinionAnalysis/data')
-	# if not os.path.exists('./OpinionAnalysis/log'):
-	# 	os.makedirs('./OpinionAnalysis/log')
-
 	def param_generator(json_data):
 		for data in json_data:
 			yield data['id'], data['title'], data['content']
@@ -51,52 +28,25 @@ def tag_and_write_for_CopeOpi(json_data, num_cores, text, w2v, method='CKIP'):
 			resultList.append([data['id'], data['title'], data['content']])
 		return resultList
 
-	def tag_and_write_job(param):
-		num_x, news_title, news_content = param
+	def tag_and_write_job(dataList):
+		dataList = np.array(dataList)
+		ids = dataList[:, 0]
+		stance_pair = [dataList[:, 1:]]
 
-		logging.info("Processing news #{}".format(num_x))
+		stance_pair = []
+		for ariticle in dataList[:, 1:]:
+			news_title, news_content = ariticle
+			bodyText = "{} {}".format(news_title, news_content)
+			stance_pair.append([text, bodyText])	
 
-		## JIEBA + Stanford ##
-		'''
-		seg_output = list(jieba.cut(news_content.replace('\xa0',' ')))
-		stanford_output = SFtagger.tag(seg_output)
-		news_content = ''
+		stances = bert.predict(stance_pair)
 
-		for out in stanford_output:
-			news_content += out[1].split('#')[0] + '(' + Stanford2CKIP(out[1].split('#')[1]) + ') '
-		'''
-		# prefix = "反對"
-		bodyText = "{} {}".format(news_title, news_content)
-		# _stance = stanceAnalyzer(prefix+text, bodyText, w2v)
-		_stance = stanceAnalyzerCos(text, bodyText, w2v)
-		if _stance == "discuss":
-			_stance = "neutral"
-		# print("{} vs {} : {}".format(text, bodyText, _stance))
-		print("[RESULT] News #{} stance : {} ".format(num_x, _stance))
-
-		## CKIP ##
-		# news_content = ' '.join(CKIPsegmenter(news_content))
-		# news_title = ' '.join(CKIPsegmenter(clean_title(news_title)))
-
-		# totalScore, outString = COanalyzer.score(news_content)
-		# titleScore, _ = COanalyzer.score(news_title)
-
-		# # save processed text
-		# filepath = 'OpinionAnalysis/data/{}.txt'.format(num_x)
-		# with open(filepath, 'w') as fp:
-		# 	fp.write(news_content)
-
-		# # save CopeOpi output
-		# filepath = 'OpinionAnalysis/log/{}.txt'.format(num_x)
-		# with open(filepath, 'w') as fp:
-		# 	fp.write(outString)
-	
-		# totalOpi = Score2Opi(totalScore, 0.1, -0.1)
-		# titleOpi = Score2Opi(titleScore, 0.2, -0.2)
-		# return {'id':num_x, 'score':totalScore, 'opi':totalOpi,
-		# 		't_score': titleScore, 't_opi':titleOpi,
-		# 		'stance': _stance}
-		return {'id':num_x,'stance': _stance}
+		# new_json_data = [{}, ]
+		new_json_data = list()
+		for num_x, _stance in zip(ids, stances):
+			new_json_data.append({'id':int(num_x),'stance': _stance})
+		
+		return new_json_data
 
 
 	pool = ProcessPool(num_cores)
@@ -112,12 +62,14 @@ def tag_and_write_for_CopeOpi(json_data, num_cores, text, w2v, method='CKIP'):
 	# new_json_data = pool.map(tag_and_write_job, param_generator(json_data))
 	new_json_data = list()
 	dataList = param_generator_seq(json_data)
-	for ele in dataList:
-		new_json_data.append(tag_and_write_job(ele))
+
+	new_json_data = tag_and_write_job(dataList)
+
 	print("Cost time : {}secs".format(time.time()-startTime))
 
 	df = pd.DataFrame(json_data)
 	df_new = pd.DataFrame(new_json_data)
+
 	ret_df = df.merge(df_new, left_on='id', right_on='id')
 	ret_json = json.loads(ret_df.to_json(orient='records'))
 
@@ -186,4 +138,6 @@ def Stanford2CKIP(x):
 	except KeyError: # if x does not exist in this mapping, return x
 		logging.info('key "{}" does not exist in Stanford2CKIP mapping.'.format(x))
 		return(x)
+
+
 
