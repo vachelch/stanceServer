@@ -33,7 +33,7 @@ import numpy as np
 
 BERT_BASE_DIR="/tmp/mrpc_output/chinese_L-12_H-768_A-12/"
 GLUE_DIR="fnc_data"
-TRAINED_CLASSIFIER="/tmp/mrpc_output/model.ckpt-10131"
+TRAINED_CLASSIFIER="/tmp/mrpc_output/model.ckpt-9993"
 
 class flags(object):
   def __init__(self):
@@ -680,79 +680,12 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
   return features
 
 
-def predict(stance_data):
-  # tf.logging.set_verbosity(tf.logging.INFO)
-
-  processors = {
-      "cola": ColaProcessor,
-      "mnli": MnliProcessor,
-      "mrpc": MrpcProcessor,
-      "xnli": XnliProcessor,
-  }
-
-  bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
-
-  if FLAGS.max_seq_length > bert_config.max_position_embeddings:
-    raise ValueError(
-        "Cannot use sequence length %d because the BERT model "
-        "was only trained up to sequence length %d" %
-        (FLAGS.max_seq_length, bert_config.max_position_embeddings))
-
-  tf.gfile.MakeDirs(FLAGS.output_dir)
-
-  task_name = FLAGS.task_name.lower()
-
-  if task_name not in processors:
-    raise ValueError("Task not found: %s" % (task_name))
-
-  processor = processors[task_name]()
-
-  label_list = processor.get_labels()
-
-  tokenizer = tokenization.FullTokenizer(
-      vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
-
-  tpu_cluster_resolver = None
-  if FLAGS.use_tpu and FLAGS.tpu_name:
-    tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(
-        FLAGS.tpu_name, zone=FLAGS.tpu_zone, project=FLAGS.gcp_project)
-
-  is_per_host = tf.contrib.tpu.InputPipelineConfig.PER_HOST_V2
-  run_config = tf.contrib.tpu.RunConfig(
-      cluster=tpu_cluster_resolver,
-      master=FLAGS.master,
-      model_dir=FLAGS.output_dir,
-      save_checkpoints_steps=FLAGS.save_checkpoints_steps,
-      tpu_config=tf.contrib.tpu.TPUConfig(
-          iterations_per_loop=FLAGS.iterations_per_loop,
-          num_shards=FLAGS.num_tpu_cores,
-          per_host_input_for_training=is_per_host))
-
-  train_examples = None
-  num_train_steps = None
-  num_warmup_steps = None
+def predict(stance_data, global_set):
+  processor = global_set.processor
+  estimator = global_set.estimator
+  tokenizer = global_set.tokenizer
   
-
-  model_fn = model_fn_builder(
-      bert_config=bert_config,
-      num_labels=len(label_list),
-      init_checkpoint=FLAGS.init_checkpoint,
-      learning_rate=FLAGS.learning_rate,
-      num_train_steps=num_train_steps,
-      num_warmup_steps=num_warmup_steps,
-      use_tpu=FLAGS.use_tpu,
-      use_one_hot_embeddings=FLAGS.use_tpu)
-
-  # If TPU is not available, this will fall back to normal Estimator on CPU
-  # or GPU.
-  estimator = tf.contrib.tpu.TPUEstimator(
-      use_tpu=FLAGS.use_tpu,
-      model_fn=model_fn,
-      config=run_config,
-      train_batch_size=FLAGS.train_batch_size,
-      eval_batch_size=FLAGS.eval_batch_size,
-      predict_batch_size=FLAGS.predict_batch_size)
-
+  label_list = processor.get_labels()
 
   predict_examples = processor.predict(stance_data)
   predict_file = os.path.join(FLAGS.output_dir, "predict.tf_record")
@@ -787,4 +720,5 @@ def predict(stance_data):
 
 # if __name__ == '__main__':
   # predict([["不支持婚姻平權",  "支持婚姻平權"], ["不支持婚姻平權",  "不支持婚姻平權"] ])
+
 

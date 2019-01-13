@@ -28,9 +28,10 @@ def printClaim2File(filename, claimText, claimTextRm):
 	_file.close()
 
 class OpinionManager(object):
-	def __init__(self, db_path, w2v_path):
+	def __init__(self, db_path, w2v_path, global_set):
 		self.db= OpinionDB(db_path)
 		self.w2v = LoadModel(w2v_path, True)
+		self.global_set = global_set
 
 	def get_two_side_news(self, text, count):
 		original_news_data = get_Google_news(text, count)
@@ -89,7 +90,7 @@ class OpinionManager(object):
 
 			# Get Not Exist Opinion Scores
 			print("Get Stance")
-			json_data = get_news_opinion(filtered_news_content, core_analyzer, text, self.w2v)
+			json_data = get_news_opinion(filtered_news_content, core_analyzer, text, self.w2v, self.global_set)
 
 			# Reformat to list for db insertion
 			for row_dict in json_data:

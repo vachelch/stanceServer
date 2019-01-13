@@ -4,15 +4,19 @@ from flask import jsonify
 import logging
 import jieba
 import json
+import time
 
+from global_set import load_static
 from opinionManager import OpinionManager
 from NewsCrawler import GetUrlContent
 
 app = Flask(__name__, template_folder='app/templates',static_folder='app/static')
 
+global_set = load_static()
+
 manager = OpinionManager(db_path='./OpinionDB/opinion.db', 
-						 # w2v_path='./OpinionAnalysis/trainChineseW2V_D300W5MC2_v2.bin')
-						 w2v_path='/tmp3/r05922037/embedding/wiki.zh.self.bin')
+						 w2v_path='/tmp3/r05922037/embedding/wiki.zh.self.bin',
+						 global_set = global_set)
 
 def JIEBAInit(file_path='OpinionAnalysis/dict/'):
 	logging.info('Loading dictionary and initializing jieba...')
@@ -56,9 +60,11 @@ def list():
 	count = int(request.args.get('count'))
 
 	print(text, count)
+	start = time.time()
 	json_data = manager.retrieve(text=text,count=count)
 	pie_chart_data_stance, line_chart_data_stance = manager.convert_to_chart_data(json_data)
 
+	print("total time: %f s"%(time.time() - start))
 	return jsonify(json_data=json_data,
 				   pie_chart_dataStance=pie_chart_data_stance, 
 				   line_chart_dataStance=line_chart_data_stance)
@@ -101,6 +107,7 @@ def feedback():
 
 	elif request.method == 'GET':
 		json_data = manager.retrieve_from_local()
+		print(json_data[94])
 		return json.dumps(json_data)
 
 	return 'invalid operation'
@@ -108,7 +115,7 @@ def feedback():
 
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
-	app.run(host='0.0.0.0', port=6655, debug=True, processes = 25, extra_files=['./app/static/js/index.js'])
+	app.run(host='0.0.0.0', port=6655, debug=True, extra_files=['./app/static/js/index.js'])
 
 
 

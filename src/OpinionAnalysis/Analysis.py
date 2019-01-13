@@ -9,15 +9,13 @@ from pathos.pools import ProcessPool
 import pandas as pd
 import numpy as np
 
-
-
 import OpinionAnalysis.bert.run_classifier as bert
 
-def get_news_opinion(json_data, num_cores, text, w2v):
-	df_data = tag_and_write_for_CopeOpi(json_data, num_cores, text, w2v)
+def get_news_opinion(json_data, num_cores, text, w2v, global_set):
+	df_data = tag_and_write_for_CopeOpi(json_data, num_cores, text, w2v, global_set)
 	return df_data
 
-def tag_and_write_for_CopeOpi(json_data, num_cores, text, w2v, method='CKIP'):
+def tag_and_write_for_CopeOpi(json_data, num_cores, text, w2v, global_set, method='CKIP'):
 	def param_generator(json_data):
 		for data in json_data:
 			yield data['id'], data['title'], data['content']
@@ -39,7 +37,7 @@ def tag_and_write_for_CopeOpi(json_data, num_cores, text, w2v, method='CKIP'):
 			bodyText = "{} {}".format(news_title, news_content)
 			stance_pair.append([text, bodyText])	
 
-		stances = bert.predict(stance_pair)
+		stances = bert.predict(stance_pair, global_set)
 
 		# new_json_data = [{}, ]
 		new_json_data = list()
@@ -65,7 +63,7 @@ def tag_and_write_for_CopeOpi(json_data, num_cores, text, w2v, method='CKIP'):
 
 	new_json_data = tag_and_write_job(dataList)
 
-	print("Cost time : {}secs".format(time.time()-startTime))
+	print("predict time: {} s".format(time.time()-startTime))
 
 	df = pd.DataFrame(json_data)
 	df_new = pd.DataFrame(new_json_data)
