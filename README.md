@@ -1,6 +1,6 @@
 # stanceServer
 ## Description
-`stanceServer` is an online Chinese news stance analysis tool, it realize state-of-the-art stance analysis performance. In details, it provide a window for query, when people search in the query window, the news (Taiwan) will be crawled from google news. Then, news are processed automatically and the stance relationship between query and news will be shown. What's more, people can see the how trend of the news change over time, you may also help us rectify the results. 
+`stanceServer` is an online Chinese news stance analysis tool, it realize state-of-the-art stance analysis performance. In details, it provides a window for query, when people search in the query window, the news (Taiwan) will be crawled from google news. Then, news are processed automatically and the stance relationship between query and news will be shown. What's more, people can see the trend of news about the query change over time. You may also help us when you use it, by rectifying the results to teach the machine to train better classifier.
 
 ## Functions
 * Real Time Google News Crawler
