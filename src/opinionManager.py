@@ -94,15 +94,6 @@ class OpinionManager(object):
 
 			# Reformat to list for db insertion
 			for row_dict in json_data:
-				# row = ( row_dict['url'],
-				# 		row_dict['title'],
-				# 		row_dict['opi'],
-				# 		row_dict['score'],
-				# 		row_dict['t_opi'],
-				# 		row_dict['t_score'],
-				# 		row_dict['website'],
-				# 		row_dict['date'],
-				# 		row_dict['stance'])
 				row = [ "", # query
 						row_dict['url'],
 						row_dict['title'],
@@ -122,23 +113,6 @@ class OpinionManager(object):
 		# self.db.insert(data)
 
 		json_data = self.vec_to_json(data)
-		# Select from DB
-		# for url_idx, url in enumerate(urls):
-		# 	row = self.db.select_url(url)
-		# 	if row is not None:
-		# 		row_obj = { 'id': url_idx,
-		# 					'url': row[0],
-		# 					'title': row[1],
-		# 					'opi': row[2],
-		# 					'score': row[3],
-		# 					't_opi': row[4],
-		# 					't_score': row[5],
-		# 					'website': row[6],
-		# 					'date': row[7],
-		# 					'stance': row[8] }
-		# 		json_data[ url_idx ] = row_obj
-		# 	else:
-		# 		logging.warning('{} is not in db'.format(url))
 		return json_data
 
 	def retrieve_from_local(self):
@@ -177,33 +151,6 @@ class OpinionManager(object):
 		end_date = max(df['date'])
 		num_day = int( (end_date - start_date).days + 1 )
 		dates_list = [start_date + timedelta(n) for n in range(num_day)]
-
-		# pos_df = summ_df[summ_df['opi'] == 'Positive']['news_count']
-		# neg_df = summ_df[summ_df['opi'] == 'Negative']['news_count']
-		# neu_df = summ_df[summ_df['opi'] == 'Neutral']['news_count']
-
-		# pos_count = sum(pos_df.tolist())
-		# neg_count = sum(neg_df.tolist())
-		# neu_count = sum(neu_df.tolist())
-
-		# pos_df = pos_df.reindex(dates_list, fill_value=0)
-		# neg_df = neg_df.reindex(dates_list, fill_value=0)
-		# neu_df = neu_df.reindex(dates_list, fill_value=0)
-
-		# dates_list = [x.strftime('%Y-%m-%d') for x in dates_list]
-
-		# pie_chart_data_sentiment = {
-		# 	'pos': pos_count,
-		# 	'neg': neg_count,
-		# 	'neu': neu_count
-		# }
-
-		# line_chart_data_sentiment = {
-		# 	'date': dates_list,
-		# 	'pos': pos_df.tolist(),
-		# 	'neg': neg_df.tolist(),
-		# 	'neu': neu_df.tolist()
-		# }
 
 		# stance
 		summ_df = pd.DataFrame(df.groupby(['date','stance']).size(), columns = ['news_count'])
