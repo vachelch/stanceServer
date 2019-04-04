@@ -68,8 +68,6 @@ def feedback():
 		stance = dataDict.get('stance')
 		label = dataDict.get('label')
 
-		# print([url, title, website, date, stance, label])
-
 		if operation == 'insert':
 			in_db_urls, urls = manager.db.filter([url])
 			if len(urls) > 0:
