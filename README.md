@@ -10,24 +10,24 @@
 
 ## File Structure
 ```ascii
--<src>\
-  -<app>\
-    -<static>\
-    -<templates>\
-  -<NewsCrawler>\
-    -GoogleNews.py
-    -NewsCrawler.py
-  -<OpinionAnalysis>
-    -<bert>\
-    -<dict>\
-    -Analysis.py
-    -GetOpinion.py
-  -<OpinionDB>
-    -opinionDB.py
-    -opinion.db
-  -opinionManager.py
-  -server.py
-  -global_set.py
+src/
+├── app/
+│   └── static/
+│   └── templates/
+├── NewsCrawler/
+│   └── GoogleNews.py
+│   └── NewsCrawler.py
+├── OpinionAnalysis/
+│   └── bert/
+│   └── dict/
+│   └── Analysis.py
+│   └── GetOpinion.py
+├── OpinionDB/
+│   └── opinionDB.py
+│   └── opinion.db
+├── opinionManager.py
+├── global_set.py
+├── server.py
 ```
 
 ## Start server
