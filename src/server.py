@@ -36,24 +36,6 @@ def homepage():
 def data():
 	return render_template("data.html")
 
-@app.route('/search',methods=['GET'])
-# def search():
-# 	# Get arguments
-# 	text = request.args.get('text')
-# 	count = int(request.args.get('count'))
-
-# 	json_data = manager.retrieve(text=text,count=count,core_crawler=2,core_analyzer=2)
-
-# 	# pie_chart_data_sentiment, line_chart_data_sentiment, pie_chart_data_stance, line_chart_data_stance = manager.convert_to_chart_data(json_data)
-# 	pie_chart_data_stance, line_chart_data_stance = manager.convert_to_chart_data(json_data)
-
-# 	# return jsonify(pie_chart_dataSentiment=pie_chart_data_sentiment, 
-# 	# 			   line_chart_dataSentiment=line_chart_data_sentiment,
-# 	# 			   pie_chart_dataStance=pie_chart_data_stance, 
-# 	# 			   line_chart_dataStance=line_chart_data_stance)
-# 	return jsonify(pie_chart_dataStance=pie_chart_data_stance, 
-# 				   line_chart_dataStance=line_chart_data_stance)
-
 @app.route('/list',methods=['GET'])
 def list():
 	text = request.args.get('text')
